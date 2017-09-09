@@ -28,49 +28,45 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:padding="20dp">
 
+
+        <LinearLayout
+            android:id="@+id/ll_course"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <EditText
             android:id="@+id/et_courseName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Enter Course Name"/>
-
-        <EditText
-            android:id="@+id/et_subjectName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Subject Name"
-            android:layout_below="@+id/et_courseName"/>
-
-        <EditText
-            android:id="@+id/et_subSubjectName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Sub Subject Name"
-            android:layout_below="@+id/et_subjectName"/>
-
-        <EditText
-            android:id="@+id/et_imageName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Image Name"
-            android:layout_below="@+id/et_subSubjectName"/>
+            android:hint="Enter Course Name"
+            android:layout_weight="0.7"
+            android:inputType="textCapWords"/>
 
         <Button
             android:id="@+id/btn_submit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Submit"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/et_imageName"/>
+            android:layout_weight="0.3"/>
 
-        <Button
-            android:id="@+id/btn_add_course"
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add New Course"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/btn_submit"/>
+            android:text="No Courses Found"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_courses"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/ll_course"
+            tools:listitem="@layout/item_course"
+            />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton

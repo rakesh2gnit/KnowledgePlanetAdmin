@@ -27,7 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.knowledgeplanet.admin.android.model.Post;
+import com.knowledgeplanet.admin.android.model.Course;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private GoogleApiClient mGoogleApiClient;
     EditText et_courseName, et_subjectName, et_subSubjectName, et_imageName;
-    Button btn_submit;
+    Button btn_submit, btn_add_course;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,8 +79,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         et_subSubjectName = (EditText) findViewById(R.id.et_subSubjectName);
         et_imageName = (EditText) findViewById(R.id.et_imageName);
         btn_submit = (Button) findViewById(R.id.btn_submit);
+        btn_add_course = (Button) findViewById(R.id.btn_add_course);
 
         btn_submit.setOnClickListener(this);
+        btn_add_course.setOnClickListener(this);
+
+        //getCategories();
 
     }
 
@@ -93,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.fab_logout:
                 signOut();
+                break;
+
+            case R.id.btn_add_course:
+                goToMainPageActivity();
                 break;
         }
     }
@@ -123,6 +131,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent mainIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(mainIntent);
         finish();
+    }
+
+    private void goToMainPageActivity() {
+        Intent mainIntent = new Intent(MainActivity.this, AddCourseActivity.class);
+        startActivity(mainIntent);
+        //finish();
     }
 
     private void submitPost() {
@@ -159,41 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
 
-        mDatabase.child("posts").child("").addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get value
-                        Post post = dataSnapshot.getValue(Post.class);
+        Course item = new Course(courseName,subjectName,subSubjectName,imageName);
 
-                        if (post == null) {
-                            // post is null, error out
-                            Log.e(TAG, "User " + post + " is unexpectedly null");
-                            Toast.makeText(MainActivity.this,
-                                    "Error: could not fetch data.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            if(post.course.equalsIgnoreCase(courseName)) {
-                                Toast.makeText(MainActivity.this,"Already Exist",Toast.LENGTH_SHORT).show();
-                                writeNewPost(courseName, subjectName, subSubjectName, imageName);
-                            }else{
-                                // Write new post
-                                writeNewPost(courseName, subjectName, subSubjectName, imageName);
-                            }
-                        }
+        DatabaseReference newRef = mDatabase.child("posts").push();
+        newRef.setValue(item);
 
-                        // Finish this Activity, back to the stream
-                        setEditingEnabled(true);
-                        //finish();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        setEditingEnabled(true);
-                    }
-                });
-        // [END single_value_read]
+        setEditingEnabled(true);
     }
 
     private void setEditingEnabled(boolean enabled) {
@@ -212,13 +197,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(course, subject, subsubject, image);
-        Map<String, Object> postValues = post.toMap();
+        //Course post = new Course(course, subject, subsubject, image);
+        //Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
+        //childUpdates.put("/posts/" + key, postValues);
         //childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
 
         mDatabase.updateChildren(childUpdates);
+    }
+
+    private void getCategories(){
+        mDatabase.child("posts").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get value
+                        Course post = dataSnapshot.getValue(Course.class);
+                       // Log.e(TAG,post.getPosts().getComputer().toString());
+                        //String[] value = (String[]) dataSnapshot.getValue();
+                        if (post == null) {
+                            // post is null, error out
+                            Log.e(TAG, "User " + post + " is unexpectedly null");
+                            Toast.makeText(MainActivity.this,
+                                    "Error: could not fetch data.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                           //Log.e(TAG,post.course);
+
+                            /*if(post.course.equalsIgnoreCase(courseName)) {
+                                Toast.makeText(MainActivity.this,"Already Exist",Toast.LENGTH_SHORT).show();
+                                //writeNewPost(courseName, subjectName, subSubjectName, imageName);
+                            }else{
+                                // Write new post
+                                // writeNewPost(courseName, subjectName, subSubjectName, imageName);
+                            }*/
+                        }
+
+                        // Finish this Activity, back to the stream
+                        setEditingEnabled(true);
+                        //finish();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        setEditingEnabled(true);
+                    }
+                });
     }
 }
