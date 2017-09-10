@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mDatabase;
 
     private GoogleApiClient mGoogleApiClient;
-    EditText et_courseName, et_subjectName, et_subSubjectName, et_imageName;
-    Button btn_submit, btn_add_course;
+    Button btn_add_course, btn_add_subject;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,15 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabLogout = (FloatingActionButton) findViewById(R.id.fab_logout);
         fabLogout.setOnClickListener(this);
 
-        et_courseName = (EditText) findViewById(R.id.et_courseName);
-        et_subjectName = (EditText) findViewById(R.id.et_subjectName);
-        et_subSubjectName = (EditText) findViewById(R.id.et_subSubjectName);
-        et_imageName = (EditText) findViewById(R.id.et_imageName);
-        btn_submit = (Button) findViewById(R.id.btn_submit);
         btn_add_course = (Button) findViewById(R.id.btn_add_course);
+        btn_add_subject = (Button) findViewById(R.id.btn_add_subject);
 
-        btn_submit.setOnClickListener(this);
         btn_add_course.setOnClickListener(this);
+        btn_add_subject.setOnClickListener(this);
 
         //getCategories();
 
@@ -91,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_submit:
-                submitPost();
+            case R.id.btn_add_subject:
+                goToAddSubjectDetailAct();
+                //submitPost();
                 break;
 
             case R.id.fab_logout:
@@ -139,7 +135,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //finish();
     }
 
-    private void submitPost() {
+    private void goToAddSubjectDetailAct() {
+        Intent mainIntent = new Intent(MainActivity.this, AddSubjectDetailActivity.class);
+        startActivity(mainIntent);
+        //finish();
+    }
+
+    /*private void submitPost() {
         final String courseName = et_courseName.getText().toString().trim();
         final String subjectName = et_subjectName.getText().toString().trim();
         final String subSubjectName = et_subSubjectName.getText().toString().trim();
@@ -179,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         newRef.setValue(item);
 
         setEditingEnabled(true);
-    }
+    }*/
 
-    private void setEditingEnabled(boolean enabled) {
+    /*private void setEditingEnabled(boolean enabled) {
         et_courseName.setEnabled(enabled);
         et_subjectName.setEnabled(enabled);
         et_subSubjectName.setEnabled(enabled);
@@ -191,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             btn_submit.setVisibility(View.GONE);
         }
-    }
+    }*/
 
     private void writeNewPost(String course, String subject, String subsubject, String image) {
         // Create new post at /user-posts/$userid/$postid and at
@@ -235,14 +237,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                         // Finish this Activity, back to the stream
-                        setEditingEnabled(true);
+                       // setEditingEnabled(true);
                         //finish();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        setEditingEnabled(true);
+                       // setEditingEnabled(true);
                     }
                 });
     }

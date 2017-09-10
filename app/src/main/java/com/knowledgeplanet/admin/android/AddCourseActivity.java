@@ -1,8 +1,12 @@
 package com.knowledgeplanet.admin.android;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -65,16 +69,95 @@ public class AddCourseActivity extends AppCompatActivity implements View.OnClick
 
         btn_submit.setOnClickListener(this);
 
-        mCourseRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mCourseRecycler.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mCourseRecycler.setLayoutManager(mLayoutManager);
+        mCourseRecycler.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mCourseRecycler.setItemAnimator(new DefaultItemAnimator());
 
         //initialise database
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mCourseDb = FirebaseDatabase.getInstance().getReference()
                 .child("course");
 
+        mCourseRecycler.addOnItemTouchListener(new CourseAdapter.RecyclerTouchListener(this,
+                mCourseRecycler, new CourseAdapter.ClickListener() {
+            @Override
+            public void onClick(View view, final int position) {
+                //Values are passing to activity & to fragment as well
+                final TextView txtCourse = (TextView)view.findViewById(R.id.course);
+                Toast.makeText(AddCourseActivity.this, "Single Click on position        :" + position+" , "+ txtCourse.getText().toString().trim(),
+                        Toast.LENGTH_SHORT).show();
+                showDialog(txtCourse.getText().toString().trim());
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(AddCourseActivity.this, "Long press on position :" + position,
+                        Toast.LENGTH_LONG).show();
+                //showDialog();
+            }
+        }));
+
         //getValue();
         //getSingleValue();
         //getChildEvent();
+    }
+
+    private void showDialog(final String course) {
+        et_courseName.clearFocus();
+        mCourseDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("dataSnapshot", dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddCourseActivity.this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("What do you want to do?")
+                .setTitle("Alert");
+
+        // Add the buttons
+        builder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                mCourseDb.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Course deleteSD = snapshot.getValue(Course.class);
+                            if (course.equalsIgnoreCase(deleteSD.course)) {
+                                mCourseDb.child(snapshot.getKey().toString()).removeValue();
+                                break;
+                            }
+                        }
+                        //adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                //mCourseDb.child("-KteiDr2Isb9ftP1iYPT").removeValue();
+            }
+        });
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        // Set other dialog properties
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

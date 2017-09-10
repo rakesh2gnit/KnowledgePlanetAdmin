@@ -20,6 +20,7 @@
         <activity android:name=".MainActivity"
             android:label="Add New Category"/>
         <activity android:name=".AddCourseActivity"/>
+        <activity android:name=".AddSubjectDetailActivity"/>
     </application>
 
 </manifest>

@@ -12,19 +12,19 @@ import com.google.gson.annotations.SerializedName;
 public class Course {
 
     public String course;
-    public String Subject;
+    public String subject;
     public String SubSubject;
-    public String ImageName;
+    public String imageName;
 
     public Course(){
 
     }
 
-    public Course(String course, String Subject, String SubSubject, String ImageName) {
+    public Course(String course, String subject, String SubSubject, String imageName) {
         this.course = course;
-        this.Subject = Subject;
+        this.subject = subject;
         this.SubSubject = SubSubject;
-        this.ImageName = ImageName;
+        this.imageName = imageName;
 
     }
 
