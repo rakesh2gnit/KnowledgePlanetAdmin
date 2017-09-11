@@ -37,6 +37,7 @@
             android:id="@+id/et_subjectName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapWords"
             android:layout_below="@+id/spin_courseName"
             android:hint="Enter Subject Name" />
 
@@ -63,11 +64,33 @@
                 android:text="Upload" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_imagedesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_imgupload"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_docs"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/tv_imgname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:text="" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_imgupload"
+            android:layout_below="@+id/ll_imagedesc"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text="Submit" />
